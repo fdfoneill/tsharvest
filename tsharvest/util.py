@@ -4,7 +4,8 @@ from datetime import datetime, timedelta
 logging.basicConfig(level=os.environ.get("LOGLEVEL","INFO"))
 log = logging.getLogger(__name__)
 
-import geopandas, glob, os, rasterio, shutil, subprocess
+import glob, os, rasterio, shutil, subprocess
+import geopandas as gpd
 from pyproj import CRS
 
 from .const import TEMP_DIR
