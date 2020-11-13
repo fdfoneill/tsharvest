@@ -6,6 +6,7 @@ log = logging.getLogger(__name__)
 
 import fiona
 from shapely.geometry import Point, shape
+from .const import *
 
 
 def indices_to_coords(x, y, geomatrix) -> tuple:

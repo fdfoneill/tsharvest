@@ -8,7 +8,7 @@ import glob, os, rasterio, shutil, subprocess
 import geopandas as gpd
 from pyproj import CRS
 
-from .const import TEMP_DIR
+from .const import *
 
 
 def clean() ->  bool:
