@@ -1,0 +1,25 @@
+# .gitignore
+__pycache__
+python-virtual-environments
+venv
+statscode
+temp/*
+*/temp/*
+glam_keys.json
+/src
+dask*
+
+# distribution / packaging
+bin/
+build/
+develop-eggs/
+dist/
+eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
