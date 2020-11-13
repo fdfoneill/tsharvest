@@ -96,7 +96,7 @@ def shapefile_toRaster(shapefile_path, raster_path, out_path) -> str:
 	shp = gpd.read_file(shapefile_path)
 	with rasterio.open(raster_path,'r') as rst:
 		meta = rst.meta.copy()
-	meta.update(compress='packbits')
+	#meta.update(compress='packbits')
 
 	with rasterio.open(out_path, 'w+', **meta) as out:
 		out_arr = out.read(1)
