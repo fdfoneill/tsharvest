@@ -22,7 +22,7 @@ def clean() ->  bool:
 			log.warning(f"Failed to remove {os.path.basename(f)} from {TEMP_DIR}")
 
 
-def cloud_optimize_inPlace(in_file:str) -> None:
+def cloud_optimize_inPlace(in_file:str,compress="LZW") -> None:
 	"""Takes path to input and output file location. Reads tif at input location and writes cloud-optimized geotiff of same data to output location."""
 	## add overviews to file
 	cloudOpArgs = ["gdaladdo",in_file]
@@ -35,7 +35,7 @@ def cloud_optimize_inPlace(in_file:str) -> None:
 			shutil.copyfileobj(b,a)
 
 	## add tiling to file
-	cloudOpArgs = ["gdal_translate",intermediate_file,in_file,'-q','-co', "TILED=YES",'-co',"COPY_SRC_OVERVIEWS=YES",'-co', "COMPRESS=LZW", "-co", "PREDICTOR=2"]
+	cloudOpArgs = ["gdal_translate",intermediate_file,in_file,'-q','-co', "TILED=YES",'-co',"COPY_SRC_OVERVIEWS=YES",'-co', f"COMPRESS={compress}", "-co", "PREDICTOR=2"]
 	subprocess.call(cloudOpArgs)
 
 	## remove intermediate
@@ -96,6 +96,7 @@ def shapefile_toRaster(shapefile_path, raster_path, out_path) -> str:
 	shp = gpd.read_file(shapefile_path)
 	with rasterio.open(raster_path,'r') as rst:
 		meta = rst.meta.copy()
+	meta.update(compress='packbits')
 
 	with rasterio.open(out_path, 'w+', **meta) as out:
 		out_arr = out.read(1)
