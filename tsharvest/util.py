@@ -1,7 +1,23 @@
-import geopandas, os, rasterio, shutil, subprocess
+# set up logging
+import logging, os
+from datetime import datetime, timedelta
+logging.basicConfig(level=os.environ.get("LOGLEVEL","INFO"))
+log = logging.getLogger(__name__)
+
+import geopandas, glob, os, rasterio, shutil, subprocess
 from pyproj import CRS
 
 from .const import TEMP_DIR
+
+
+def clean() ->  bool:
+	"""Removes all files from TEMP_DIR"""
+	allTemp = glob.glob(os.path.join(TEMP_DIR,"*"))
+	for f in allTemp:
+		try:
+			os.remove(f)
+		except Exception as e:
+			log.warning(f"Failed to remove {os.path.basename(f)} from {TEMP_DIR}")
 
 
 def cloud_optimize_inPlace(in_file:str) -> None:
@@ -68,3 +84,5 @@ def matchProjections(raster_path, shapefile_path, temp_dir = TEMP_DIR) -> tuple:
 
 
 	return(raster_path,out_shapefile_path)
+
+
