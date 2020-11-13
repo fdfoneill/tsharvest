@@ -28,7 +28,8 @@ setup(name='tsharvest',
 			'geopandas',
 			'pyshp',
 			'pyproj',
-			'gdal'
+			'gdal',
+			'rasterio'
 			],
 		# classifiers
 		classifiers=[
