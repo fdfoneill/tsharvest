@@ -142,7 +142,7 @@ def zonal_stats(zone_raster:str, data_raster:str, n_cores:int = 1, block_scale_f
 		hnum = meta_handle.width
 		vnum = meta_handle.height
 	if metaprofile['tiled']:
-		blocksize = profile['blockxsize'] * block_scale_factor
+		blocksize = metaprofile['blockxsize'] * block_scale_factor
 	else:
 		log.warning(f"Input raster {data_raster} is not tiled!")
 		blocksize = default_block_size * block_scale_factor
@@ -158,5 +158,8 @@ def zonal_stats(zone_raster:str, data_raster:str, n_cores:int = 1, block_scale_f
 	with Pool(n_workers = n_cores) as p:
 		for window_data in p.map(_zonal_worker, parallel_args):
 			output_data = _update(output_data, window_data)
+
+	if time:
+		log.info(f"Finished in {datetime.now() - startTime}")
 
 	return output_data
