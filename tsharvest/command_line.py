@@ -112,3 +112,21 @@ def multi_zonal_stats(input_vector:str, product:str, start_date:str=None, end_da
 
 	# return data
 	return full_output
+
+
+def stats_to_csv(stats_dictionary, output_csv) -> None:
+	"""Writes statistics dictionary to csv format"""
+	lines = []
+	header = "date,zone,mean,pixels\n"
+	lines.append(header)
+	# generate lines
+	for date in stats_dictionary:
+		for zone in stats_dictionary[date]:
+			line = f"{date},{zone},{stats_dictionary[date][zone][value]},{stats_dictionary[date][zone][pixels]}\n"
+			lines.append(line)
+	# write to file
+	with open(output_csv,'w') as wf:
+		wf.writelines(lines)
+
+def main():
+	pass
