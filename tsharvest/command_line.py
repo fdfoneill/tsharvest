@@ -143,7 +143,7 @@ def main():
 			"chirps",
 			"merra-2-min",
 			"merra-2-mean",
-			"merra-2-max"
+			"merra-2-max",
 			"swi"
 			],
 		help="Name of desired product")
