@@ -25,10 +25,11 @@ setup(name='tsharvest',
 		include_package_data=True,
 		# third-party dependencies
 		install_requires=[
+			'gdal',
 			'geopandas',
+			'numpy',
 			'pyshp',
 			'pyproj',
-			'gdal',
 			'rasterio'
 			],
 		# classifiers
@@ -46,6 +47,8 @@ setup(name='tsharvest',
 		zip_safe=False,
 		# console scripts
 		entry_points = {
-			'console_scripts': [],
+			'console_scripts': [
+				'tsharvest=tsharvest.command_line:main'
+				],
 			}
 		)
