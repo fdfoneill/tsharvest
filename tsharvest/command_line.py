@@ -59,7 +59,7 @@ def multi_zonal_stats(input_vector:str, product:str, start_date:str=None, end_da
 	data_dict = {}
 	for f in all_files:
 		try:
-			file_date = parseDateString(".".join(os.path.basename(f).split(".")[1:4]))
+			file_date = parseDateString(".".join(os.path.basename(f).split(".")[1:3]))
 		except (IndexError, BadInputError):
 			file_date = parseDateString(os.path.basename(f).split(".")[1])
 		if start_date and (start_date > file_date):
