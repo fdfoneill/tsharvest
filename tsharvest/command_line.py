@@ -57,8 +57,10 @@ def multi_zonal_stats(input_vector:str, product:str, start_date:str=None, end_da
 
 	# get list of data files to be analyzed
 	data_directory = os.path.join(PRODUCT_DIR, product)
+	if "merra-2" in product:
+		data_directory = os.path.join(PRODUCT_DIR, "merra-2")
 	assert os.path.exists(data_directory) # make sure they didn't mistype the product
-	all_files = glob.glob(os.path.join(data_directory, "*.tif"))
+	all_files = glob.glob(os.path.join(data_directory, f"{product}.*.tif"))
 	data_dict = {}
 	for f in all_files:
 		try:
@@ -129,4 +131,49 @@ def stats_to_csv(stats_dictionary, output_csv) -> None:
 		wf.writelines(lines)
 
 def main():
-	pass
+	parser = argparse.ArgumentParser(description="Calculate zonal statistics over a portion of the GLAM data archive")
+	parser.add_argument("zone_shapefile",
+		help="Path to zone shapefile")
+	parser.add_argument("product_name",
+		options=[
+			"MOD09Q1",
+			"MYD09Q1",
+			"MOD13Q1",
+			"MYD13Q1",
+			"chirps",
+			"merra-2-min",
+			"merra-2-mean",
+			"merra-2-max"
+			"swi"
+			],
+		help="Name of desired product")
+	parser.add_argument("out_path",
+		help="Path to output csv file")
+	parser.add_argument("-sd",
+		"--start_date",
+		help="Start of temporal range of interest, formatted as 'YYYY-MM-DD' or 'YYYY.DOY'")
+	parser.add_argument("-ed",
+		"--end_date",
+		help="End of temporal range of interest, formatted as 'YYYY-MM-DD' or 'YYYY.DOY'")
+	parser.add_argument("-f",
+		"--full_archive",
+		action="store_true",
+		help="Must be set if neither start_date nor end_date are specified")
+	parser.add_argument("-zf",
+		"--zone_field",
+		default=None,
+		help="If shapefile has multiple zones, name of numeric field to use for zone values")
+	parser.add_argument("-q",
+		"--quiet",
+		action="store_false",
+		help="Suppresses logging of progress and time")
+	args = parser.parse_args()
+
+	data = multi_zonal_stats(input_vector=args.zone_shapefile, product=args.product_name, start_date=args.start_date, end_date=args.end_date, full_archive=args.full_archive, verbose=args.quiet)
+
+
+	if not args.quiet:
+		log.info("Writing data to csv")
+	stats_to_csv(data,args.out_path)
+
+	log.info(f"Done. Output is at {args.out_path}")
