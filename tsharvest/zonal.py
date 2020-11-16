@@ -155,7 +155,7 @@ def zonal_stats(zone_raster:str, data_raster:str, n_cores:int = 1, block_scale_f
 
 	# do the multiprocessing
 	output_data = {}
-	with Pool(n_workers = n_cores) as p:
+	with Pool(processes = n_cores) as p:
 		for window_data in p.map(_zonal_worker, parallel_args):
 			output_data = _update(output_data, window_data)
 
