@@ -10,7 +10,7 @@ from .const import *
 from .exceptions import *
 
 
-def multi_zonal_stats(input_vector:str, product:str, start_date:str, end_date:str, full_archive:bool = False, verbose = False, args, **kwargs) -> dict:
+def multi_zonal_stats(input_vector:str, product:str, start_date:str, end_date:str, full_archive:bool = False, verbose = False, *args, **kwargs) -> dict:
 	"""Run zonal.zonal_stats over multiple files
 
 	***
