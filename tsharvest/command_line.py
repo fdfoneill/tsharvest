@@ -146,7 +146,7 @@ def main():
 			"merra-2-max",
 			"swi"
 			],
-		help="Name of desired product")
+		help="Name of data product to be analyzed")
 	parser.add_argument("out_path",
 		help="Path to output csv file")
 	parser.add_argument("-sd",
@@ -159,6 +159,10 @@ def main():
 		"--full_archive",
 		action="store_true",
 		help="Must be set if neither start_date nor end_date are specified")
+	parser.add_argument("-c",
+		"--cores",
+		default=20,
+		help="Number of cores to use for processing")
 	parser.add_argument("-zf",
 		"--zone_field",
 		default=None,
@@ -166,10 +170,10 @@ def main():
 	parser.add_argument("-q",
 		"--quiet",
 		action="store_false",
-		help="Suppresses logging of progress and time")
+		help="Suppress logging of progress and time")
 	args = parser.parse_args()
 
-	data = multi_zonal_stats(input_vector=args.zone_shapefile, product=args.product_name, start_date=args.start_date, end_date=args.end_date, full_archive=args.full_archive, verbose=args.quiet)
+	data = multi_zonal_stats(input_vector=args.zone_shapefile, product=args.product_name, start_date=args.start_date, end_date=args.end_date, full_archive=args.full_archive, verbose=args.quiet, n_cores = args.cores)
 
 
 	if not args.quiet:
