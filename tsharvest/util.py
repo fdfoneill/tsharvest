@@ -42,7 +42,7 @@ def cloud_optimize_inPlace(in_file:str,compress="LZW") -> None:
 	os.remove(intermediate_file)
 
 
-def matchProjection(shapefile_path, raster_path, temp_dir = TEMP_DIR) -> tuple:
+def project_shapefile(shapefile_path, model_raster, out_path) -> tuple:
 	"""Returns two file paths with matching projections
 
 	Reprojects vector to match projection of raster (if
@@ -52,17 +52,19 @@ def matchProjection(shapefile_path, raster_path, temp_dir = TEMP_DIR) -> tuple:
 	---------_
 	shapefile_path:str
 		Path to shapefile that will be reprojected
-	raster_path:str
+	model_raster:str
 		Path to model raster from which projection
 		information will be extracted
-
+	out_path: str
+		Location on disk where output is to be
+		written
 
 	Returns
 	-------
 	String path to new reprojected shapefile
 	"""
 	# get raster projection as wkt
-	with rasterio.open(raster_path,'r') as img:
+	with rasterio.open(model_raster,'r') as img:
 		raster_wkt = img.profile['crs'].to_wkt()
 	# get shapefile projection as wkt
 	with open(shapefile_path.replace(".shp",".prj")) as rf:
@@ -70,31 +72,61 @@ def matchProjection(shapefile_path, raster_path, temp_dir = TEMP_DIR) -> tuple:
 
 	# if it's a match, nothing needs to be done
 	if raster_wkt == shapefile_wkt:
-		log.warning("CRS already match. Returning input path.")
-		return shapefile_path
+		log.warning("CRS already match")
+		# get input directory and filename
+		in_dir = os.path.dirname(shapefile_path)
+		in_name = os.path.splitext(os.path.basename(shapefile_path))[0]
+		# list all elements of shapefile
+		all_shape_files = glob.glob(os.path.join(in_dir,f"{in_name}.*"))
+		# get output directory and filenames
+		out_dir = os.path.dirname(out_path)
+		out_name = os.path.splitext(os.path.basename(out_path))[0]
+		for f in all_shape_files:
+			name, ext = os.path.splitext(os.path.basename(f))
+			out_f = os.path.join(out_dir,f"{out_name}{ext}")
+			with open(f,'rb') as rf:
+				with open(out_f,'wb') as wf:
+					shutil.copyfileobj(rf,wf)
+	else:
+		# get CRS objects
+		raster_crs = CRS.from_wkt(raster_wkt)
+		shapefile_crs = CRS.from_wkt(shapefile_wkt)
+		#transformer = Transformer.from_crs(raster_crs,shapefile_crs)
 
-	# get CRS objects
-	raster_crs = CRS.from_wkt(raster_wkt)
-	shapefile_crs = CRS.from_wkt(shapefile_wkt)
-	#transformer = Transformer.from_crs(raster_crs,shapefile_crs)
+		# convert geometry and crs
+		out_shapefile_path = out_path # os.path.join(temp_dir,os.path.basename(shapefile_path))
+		data = gpd.read_file(shapefile_path)
+		data_proj = data.copy()
+		data_proj['geometry'] = data_proj['geometry'].to_crs(raster_crs)
+		data_proj.crs = raster_crs
 
-	# convert geometry and crs
-	out_shapefile_path = os.path.join(temp_dir,os.path.basename(shapefile_path))
-	data = gpd.read_file(shapefile_path)
-	data_proj = data.copy()
-	data_proj['geometry'] = data_proj['geometry'].to_crs(raster_crs)
-	data_proj.crs = raster_crs
-
-	# save output
-	data_proj.to_file(out_shapefile_path)
+		# save output
+		data_proj.to_file(out_shapefile_path)
 
 
 	return out_shapefile_path
 
 
-def shapefile_toRaster(shapefile_path, raster_path, out_path) -> str:
+def shapefile_toRaster(shapefile_path, model_raster, out_path) -> str:
+	"""Burns shapefile into raster image
+	
+	***
+
+	Parameters
+	----------
+	shapefile_path: str
+		Path to input shapefile
+	model_raster: str
+		Path to existing raster dataset. Used for extent,
+		pixel size, and other metadata. Output raster
+		will be a pixel-for-pixel match of this
+		dataset
+	out_path: str
+		Location where output rsater will be written on
+		disk
+	"""
 	shp = gpd.read_file(shapefile_path)
-	with rasterio.open(raster_path,'r') as rst:
+	with rasterio.open(model_raster,'r') as rst:
 		meta = rst.meta.copy()
 	#meta.update(compress='packbits')
 
