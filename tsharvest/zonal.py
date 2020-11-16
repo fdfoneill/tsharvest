@@ -86,7 +86,7 @@ def _update(stored_dict,this_dict) -> dict:
 			stored_weight = 0
 		try:
 			# weight of this_dict value is the ratio of its valid pixels to the total new sum of valid pixels
-			this_weight = = this_info['pixels'] / (stored_info['pixels'] + this_info['pixels'])
+			this_weight = this_info['pixels'] / (stored_info['pixels'] + this_info['pixels'])
 		except ZeroDivisionError:
 			# if the total valid pixels are 0, everything gets weight 0
 			this_weight = 0
