@@ -6,6 +6,7 @@ log = logging.getLogger(__name__)
 
 import argparse, glob
 from .zonal import zonal_stats
+from .util import *
 from .const import *
 from .exceptions import *
 
