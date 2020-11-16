@@ -9,6 +9,7 @@ import geopandas as gpd
 from datetime import datetime
 from pyproj import CRS
 from rasterio import features
+from rasterio.windows import Window
 
 from .const import *
 from .exceptions import *

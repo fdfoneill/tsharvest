@@ -8,7 +8,6 @@ import rasterio
 import numpy as np
 from datetime import datetime
 from multiprocessing import Pool
-from rasterio.windows import Window
 
 from .util import *
 from .const import *
