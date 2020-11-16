@@ -6,10 +6,12 @@ log = logging.getLogger(__name__)
 
 import glob, os, rasterio, shutil, subprocess
 import geopandas as gpd
+from datetime import datetime
 from pyproj import CRS
 from rasterio import features
 
 from .const import *
+from .exceptions import *
 
 
 # housekeeping utilities
@@ -178,3 +180,12 @@ def getWindows(width, height, blocksize) -> list:
 			windows += [targetwindow]
 	return windows
 
+def parseDateString(input_string) -> datetime.date:
+	"""Parses string to datetime"""
+	for date_format in ["%Y-%m-%d","%Y.%j"]
+		try:
+			return datetime.date(datetime.strptime(input_string, date_format))
+		except:
+			continue
+	else:
+		raise BadInputError(f"Failed to parse date string '{input_string}'. Use format YYYY-MM-DD or YYYY.DOY")
