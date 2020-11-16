@@ -135,7 +135,7 @@ def main():
 	parser.add_argument("zone_shapefile",
 		help="Path to zone shapefile")
 	parser.add_argument("product_name",
-		options=[
+		choices=[
 			"MOD09Q1",
 			"MYD09Q1",
 			"MOD13Q1",
