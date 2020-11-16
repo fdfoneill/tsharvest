@@ -6,6 +6,7 @@ log = logging.getLogger(__name__)
 
 import rasterio
 import numpy as np
+from datetime import datetime
 from multiprocessing import Pool
 
 from .util import *
@@ -95,5 +96,70 @@ def _update(stored_dict,this_dict) -> dict:
 	return out_dict
 
 
-def zonal_stats():
-	pass
+def zonal_stats(input_shape:str, input_raster:str, n_cores:int = 1, block_scale_factor: int = 8, default_block_size: int = 256, time:bool = False, *args, **kwargs) -> dict:
+	"""Generates zonal statistics based on input data and zone rasters
+
+	***
+
+	Parameters
+	----------
+	input_shape: str
+		Path to input zone raster file
+	input_raster: str
+		Path to raster file
+	n_cores: int
+		How many cores to use for parallel processing. Default
+		1
+	block_scale_factor: int
+		Factor by which to scale default raster block size for
+		the purposes of windowed reads. Default 8
+	default_block_size: int
+		Inferred block size for untiled input rasters.
+		Default 256
+	time: bool
+		Whether to log time it takes to execute this function.
+		Default False
+
+	Returns
+	-------
+	A nested dictionary. Outer-level keys are zone id numbers, each
+	of which corresponds to an inner dictionary with keys "value"
+	(the mean for that zone) and "pixels" (the number of pixels in
+	that zone).
+	"""
+
+	# start timer
+	startTime = datetime.now()
+
+	# coerce integer arguments to proper type
+	n_cores = int(n_cores)
+	block_scale_factor = int(block_scale_factor)
+	default_block_size = int(default_block_size)
+
+	# # define new file names
+	# reprojected_shape = os.path.join(TEMP_DIR,os.path.basename(input_shape))
+	# rasterized_shape = reprojected_shape.replace(os.path.splitext(reprojected_shape)[1],".tif")
+
+	# # reproject and rasterize shape
+	# reproject_shapefile(input_shape, input_raster, reprojected_shape)
+	# shapefile_toRaster(reprojected_shape, input_raster, rasterized_shape)
+
+	# # make sure it worked...
+	# assert os.path.exists(rasterized_shape)
+
+	# get raster metadata
+	with rasterio.open(input_raster,'r') as meta_handle:
+		metaprofile = meta_handle.profile
+		hnum = meta_handle.width
+		vnum = meta_handle.height
+	if metaprofile['tiled']:
+		blocksize = profile['blockxsize'] * block_scale_factor
+	else:
+		log.warning(f"Input raster {input_raster} is not tiled!")
+		blocksize = default_block_size * block_scale_factor
+
+	# get windows
+	windows = getWindows(hnum, vnum, blocksize)
+
+	# generate arguments to pass into _zonal_worker
+	parallel_args = [(w, input_raster, rasterized_shape) for w in windows]

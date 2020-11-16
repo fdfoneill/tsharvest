@@ -46,7 +46,7 @@ def cloud_optimize_inPlace(in_file:str,compress="LZW") -> None:
 	os.remove(intermediate_file)
 
 
-def project_shapefile(shapefile_path, model_raster, out_path) -> tuple:
+def reproject_shapefile(shapefile_path, model_raster, out_path) -> str:
 	"""Returns two file paths with matching projections
 
 	Reprojects vector to match projection of raster (if
