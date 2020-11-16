@@ -12,6 +12,8 @@ from rasterio import features
 from .const import *
 
 
+# housekeeping utilities
+
 def clean() ->  bool:
 	"""Removes all files from TEMP_DIR"""
 	allTemp = glob.glob(os.path.join(TEMP_DIR,"*"))
@@ -21,6 +23,8 @@ def clean() ->  bool:
 		except Exception as e:
 			log.warning(f"Failed to remove {os.path.basename(f)} from {TEMP_DIR}")
 
+
+# raster/vector utilities
 
 def cloud_optimize_inPlace(in_file:str,compress="LZW") -> None:
 	"""Takes path to input and output file location. Reads tif at input location and writes cloud-optimized geotiff of same data to output location."""
@@ -107,7 +111,7 @@ def project_shapefile(shapefile_path, model_raster, out_path) -> tuple:
 	return out_shapefile_path
 
 
-def shapefile_toRaster(shapefile_path, model_raster, out_path) -> str:
+def shapefile_toRaster(shapefile_path, model_raster, out_path, zone_field:str = None) -> str:
 	"""Burns shapefile into raster image
 	
 	***
@@ -124,6 +128,10 @@ def shapefile_toRaster(shapefile_path, model_raster, out_path) -> str:
 	out_path: str
 		Location where output rsater will be written on
 		disk
+	zone_field: str
+		Field in shapefile to use as raster value. If None,
+		flagged pixels will be written as "1" and non-flagged
+		pixels will be written as NoData. Default None
 	"""
 	shp = gpd.read_file(shapefile_path)
 	with rasterio.open(model_raster,'r') as rst:
@@ -134,9 +142,34 @@ def shapefile_toRaster(shapefile_path, model_raster, out_path) -> str:
 		out_arr = out.read(1)
 
 		# this is where we create a generator of geom, value pairs to use in rasterizing
-		shapes = ((geom,1) for geom in shp.geometry)
+		if zone_field is not None: 
+			zone_vals = []
+			for i in range(len(shp)):
+				zone_vals.append(shp.at[i,zone_field])
+			shapes = ((geom,val) for geom, val in zip(shp.geometry,zone_vals))
+		else:
+			shapes = ((geom,1) for geom in shp.geometry)
 
 		burned = features.rasterize(shapes=shapes, fill=0, out=out_arr, transform=out.transform)
 		out.write_band(1, burned)
 
 	return out_path
+
+
+# processing utilities
+
+def getWindows(width, height, blocksize) -> list:
+	hnum, vnum = width, height
+	windows = []
+	for hstart in range(0, hnum, blocksize):
+		for vstart in range(0, vnum, blocksize):
+			hwin = blocksize
+			vwin = blocksize
+			if ((hstart + blocksize) > hnum):
+				hwin = (hnum % blocksize)
+			if ((vstart + blocksize) > vnum):
+				vwin = (vnum % blocksize)
+			targetwindow = Window(hstart, vstart, hwin, vwin)
+			windows += [targetwindow]
+	return windows
+
