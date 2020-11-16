@@ -5,13 +5,14 @@ logging.basicConfig(level=os.environ.get("LOGLEVEL","INFO"))
 log = logging.getLogger(__name__)
 
 import argparse, glob
+from datetime import datetime
 from .zonal import zonal_stats
 from .util import *
 from .const import *
 from .exceptions import *
 
 
-def multi_zonal_stats(input_vector:str, product:str, start_date:str=None, end_date:str=None, full_archive:bool = False, verbose = False, *args, **kwargs) -> dict:
+def multi_zonal_stats(input_vector:str, product:str, start_date:str=None, end_date:str=None, full_archive:bool = False, verbose:bool = False, *args, **kwargs) -> dict:
 	"""Run zonal.zonal_stats over multiple files
 
 	***
@@ -40,6 +41,8 @@ def multi_zonal_stats(input_vector:str, product:str, start_date:str=None, end_da
 		zonal.zonal_stats
 
 	"""
+	startTime = datetime.now()
+
 	if verbose:
 		log.info("Starting multi_zonal_stats")
 
@@ -73,6 +76,7 @@ def multi_zonal_stats(input_vector:str, product:str, start_date:str=None, end_da
 
 	if verbose:
 		log.info("Burning shapefile to raster")
+		burnTime = datetime.now()
 
 	# define new file names
 	reprojected_shape = os.path.join(TEMP_DIR,os.path.basename(input_vector))
@@ -90,7 +94,9 @@ def multi_zonal_stats(input_vector:str, product:str, start_date:str=None, end_da
 	cloud_optimize_inPlace(rasterized_shape)
 
 	if verbose:
+		log.info(f"Finished burning shapefile in {datetime.now() - burnTime}")
 		log.info("Calculating zonal statistics")
+		zoneTime = datetime.now()
 	
 	# meat and potatoes of processing
 	full_output = {}
@@ -99,4 +105,10 @@ def multi_zonal_stats(input_vector:str, product:str, start_date:str=None, end_da
 			log.info(date)
 		full_output[date] = zonal_stats(rasterized_shape, data_dict[date], *args, **kwargs)
 
+	# log time if necessary
+	if verbose:
+		log.info(f"Finished calculating in {datetime.now() - zoneTime}")
+		log.info(f"Completed in {datetime.now() - startTime}")
+
+	# return data
 	return full_output
