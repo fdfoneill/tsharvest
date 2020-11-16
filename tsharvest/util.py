@@ -111,7 +111,7 @@ def reproject_shapefile(shapefile_path, model_raster, out_path) -> str:
 	return out_shapefile_path
 
 
-def shapefile_toRaster(shapefile_path, model_raster, out_path, zone_field:str = None) -> str:
+def shapefile_toRaster(shapefile_path, model_raster, out_path, zone_field:str = None, dtype = None) -> str:
 	"""Burns shapefile into raster image
 	
 	***
@@ -132,10 +132,15 @@ def shapefile_toRaster(shapefile_path, model_raster, out_path, zone_field:str = 
 		Field in shapefile to use as raster value. If None,
 		flagged pixels will be written as "1" and non-flagged
 		pixels will be written as NoData. Default None
+	dtype: str
+		If set, overrides input metadata with new data type,
+		e.g. int16. Default None
 	"""
 	shp = gpd.read_file(shapefile_path)
 	with rasterio.open(model_raster,'r') as rst:
 		meta = rst.meta.copy()
+	if dtype:
+		meta.update(dtype=dtype)
 	#meta.update(compress='packbits')
 
 	with rasterio.open(out_path, 'w+', **meta) as out:
