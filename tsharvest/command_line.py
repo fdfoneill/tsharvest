@@ -124,7 +124,7 @@ def stats_to_csv(stats_dictionary, output_csv) -> None:
 	# generate lines
 	for date in stats_dictionary:
 		for zone in stats_dictionary[date]:
-			line = f"{date},{zone},{stats_dictionary[date][zone][value]},{stats_dictionary[date][zone][pixels]}\n"
+			line = f"{date},{zone},{stats_dictionary[date][zone]['value']},{stats_dictionary[date][zone]['pixels']}\n"
 			lines.append(line)
 	# write to file
 	with open(output_csv,'w') as wf:
