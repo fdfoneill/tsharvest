@@ -182,7 +182,7 @@ def getWindows(width, height, blocksize) -> list:
 
 def parseDateString(input_string) -> datetime.date:
 	"""Parses string to datetime"""
-	for date_format in ["%Y-%m-%d","%Y.%j"]
+	for date_format in ["%Y-%m-%d","%Y.%j"]:
 		try:
 			return datetime.date(datetime.strptime(input_string, date_format))
 		except:
