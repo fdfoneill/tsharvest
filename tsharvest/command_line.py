@@ -10,7 +10,7 @@ from .const import *
 from .exceptions import *
 
 
-def multi_zonal_stats(input_vector:str, product:str, start_date:str, end_date:str, full_archive:bool = False, *args, **kwargs) -> dict:
+def multi_zonal_stats(input_vector:str, product:str, start_date:str, end_date:str, full_archive:bool = False, verbose = False, args, **kwargs) -> dict:
 	"""Run zonal.zonal_stats over multiple files
 
 	***
@@ -32,11 +32,16 @@ def multi_zonal_stats(input_vector:str, product:str, start_date:str, end_date:st
 		set, this flag must be set to True
 		in order to process a full product
 		archive. Default False
+	verbose: bool
+		Whether to log progress; default False
 	args, kwargs
 		Other arguments to be passed to
 		zonal.zonal_stats
 
 	"""
+	if verbose:
+		log.info("Starting multi_zonal_stats")
+
 	# validate arguments
 	if start_date:
 		start_date = parseDateString(start_date)
@@ -65,6 +70,9 @@ def multi_zonal_stats(input_vector:str, product:str, start_date:str, end_date:st
 	# make sure there's at least one file in the time period of interest
 	assert len(data_dict) >= 1
 
+	if verbose:
+		log.info("Burning shapefile to raster")
+
 	# define new file names
 	reprojected_shape = os.path.join(TEMP_DIR,os.path.basename(input_vector))
 	rasterized_shape = reprojected_shape.replace(os.path.splitext(reprojected_shape)[1],".tif")
@@ -76,10 +84,18 @@ def multi_zonal_stats(input_vector:str, product:str, start_date:str, end_date:st
 
 	# make sure the rasterization worked
 	assert os.path.exists(rasterized_shape)
+
+	# cloud-optimize new raster
+	cloud_optimize_inPlace(rasterized_shape)
+
+	if verbose:
+		log.info("Calculating zonal statistics")
 	
 	# meat and potatoes of processing
 	full_output = {}
 	for date in data_dict:
+		if verbose:
+			log.info(date)
 		full_output[date] = zonal_stats(rasterized_shape, data_dict[date], *args, **kwargs)
 
 	return full_output
