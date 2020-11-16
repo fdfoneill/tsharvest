@@ -60,7 +60,7 @@ def multi_zonal_stats(input_vector:str, product:str, start_date:str=None, end_da
 	for f in all_files:
 		try:
 			file_date = parseDateString(".".join(os.path.basename(f).split(".")[1:4]))
-		except IndexError:
+		except (IndexError, BadInputError):
 			file_date = parseDateString(os.path.basename(f).split(".")[1])
 		if start_date and (start_date > file_date):
 			continue
