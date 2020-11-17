@@ -17,39 +17,76 @@ This `tsharvest` package aims to fill the role of those 'right tools' for time-s
 
 # How to Use
 
-usage: tsharvest [-h] [-sd START_DATE] [-ed END_DATE] [-f] -c CORES
-                 [-zf ZONE_FIELD] [-q]
-                 zone_shapefile
-                 {MOD09Q1,MYD09Q1,MOD13Q1,MYD13Q1,chirps,merra-2-min,merra-2-mean,merra-2-max,swi}
-                 out_path
+## Synopsis
 
-Calculate zonal statistics over a portion of the GLAM data archive
+```
+tsharvest
 
-positional arguments:
-  zone_shapefile        Path to zone shapefile
-  {MOD09Q1,MYD09Q1,MOD13Q1,MYD13Q1,chirps,merra-2-min,merra-2-mean,merra-2-max,swi}
-                        Name of data product to be analyzed
-  out_path              Path to output csv file
+[-h] [-sd START_DATE] [-ed END_DATE] [-f] -c CORES
+[-zf ZONE_FIELD] [-q]
+zone_shapefile
+{MOD09Q1,MYD09Q1,MOD13Q1,MYD13Q1,chirps,merra-2-min,merra-2-mean,merra-2-max,swi}
+out_path
+```
 
-optional arguments:
-  -h, --help            show this help message and exit
-  -sd START_DATE, --start_date START_DATE
-                        Start of temporal range of interest, formatted as
-                        'YYYY-MM-DD' or 'YYYY.DOY'
-  -ed END_DATE, --end_date END_DATE
-                        End of temporal range of interest, formatted as 'YYYY-
-                        MM-DD' or 'YYYY.DOY'
-  -f, --full_archive    Must be set if neither start_date nor end_date are
-                        specified
-  -c CORES, --cores CORES
-                        Number of cores to use for parallel processing
-  -zf ZONE_FIELD, --zone_field ZONE_FIELD
-                        If shapefile has multiple zones, name of numeric field
-                        to use for zone values
-  -q, --quiet           Suppress logging of progress and time
+## Description
 
+The `tsharvest` console script can be used to calculate zonal statistics over a portion of the GLAM data archive.
+
+* `-h, --help`
+
+ * Show help message and exit.
+
+* `-sd START_DATE, --start_date <START_DATE>`
+
+ * Start of temporal range of interest, formatted as 'YYYY-MM-DD' or 'YYYY.DOY'
+
+* `-ed END_DATE, --end_date <END_DATE>`
+
+ * End of temporal range of interest, formatted as 'YYYY-MM-DD' or 'YYYY.DOY'
+
+* `-f, --full_archive`
+
+ * This flag must be set if neither start_date nor end_date are specified.
+
+* `-c CORES, --cores <CORES>`
+
+ * Number of cores to use for parallel processing. Recommended default is 20; remember to check current usage!
+
+* `-zf ZONE_FIELD, --zone_field <ZONE_FIELD>`
+
+ * If shapefile has multiple zones, name of numeric field to use for zone values.
+
+* `-q, --quiet`
+
+ * Suppress logging of progress and time.
+
+* `<zone_shapefile>`
+
+ * Path to polygon shapefile that demarcates zones / region of interest.
+ 
+* `<{MOD09Q1,MYD09Q1,MOD13Q1,MYD13Q1,chirps,merra-2-min,merra-2-mean,merra-2-max,swi}>`
+
+ * Name of data product to be analyzed.
+ 
+* `<out_path>`
+
+ * Path to output csv file.
+
+## Examples
+
+`tsharvest polygon.shp "MOD09Q1" time_series_output.csv -sd "2019-01-01" -ed "2020-01-01" -c 20`
+
+To output CHIRPS rainfall zonal statistics for each "ADM1_CODE" zone, for the full CHIRPS archive:
+
+`tsharvest gaul1.shp "chirps" zonal_rainfall_output.csv -zf "ADM1_CODE" -f -c 20`
+
+To calculate the maximum temperature in a zone from 2017 to the present:
+
+`tsharvest polygon.shp "merra-2-max" temperature_max.csv -sd "2019.001" -c 20`
 
 # License
+
 MIT License
 
 Copyright (c) 2020 F. Dan O'Neill
