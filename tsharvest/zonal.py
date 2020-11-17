@@ -28,7 +28,7 @@ def _zonal_worker(args):
 			product_path
 			shape_path
 	"""
-	targetwindow, product_path, shape_path = args
+	targetwindow, product_path, shape_path, mask_path = args
 
 
 	# get product raster info
@@ -43,6 +43,14 @@ def _zonal_worker(args):
 	shape_data = shape_handle.read(1,window=targetwindow)
 	shape_handle.close()
 
+	# get mask raster info
+	if mask_path is not None:
+		mask_handle = rasterio.open(mask_path,'r')
+		mask_data = mask_handle.read(1,window=targetwindow)
+		mask_handle.close()
+	else:
+		mask_data = np.full(product_data.shape,1)
+
 
 	# create empty output dictionary
 	out_dict = {}
@@ -53,7 +61,7 @@ def _zonal_worker(args):
 		valid_pixels = int((shape_data[(shape_data == zone_code)]).size)
 		if valid_pixels == 0:
 			continue
-		masked = np.array(product_data[(product_data != product_noDataVal) & (shape_data == zone_code)], dtype='int64')
+		masked = np.array(product_data[(product_data != product_noDataVal) & (shape_data == zone_code) & (mask_data == 1)], dtype='int64')
 		value = (masked.mean() if (masked.size > 0) else 0)
 		out_dict[zone_code] = {"value":value,"pixels":masked.size}
 
@@ -96,7 +104,7 @@ def _update(stored_dict,this_dict) -> dict:
 	return out_dict
 
 
-def zonal_stats(zone_raster:str, data_raster:str, n_cores:int = 1, block_scale_factor: int = 8, default_block_size: int = 256, time:bool = False, *args, **kwargs) -> dict:
+def zonal_stats(zone_raster:str, data_raster:str, mask_raster = None, n_cores:int = 1, block_scale_factor: int = 8, default_block_size: int = 256, time:bool = False, *args, **kwargs) -> dict:
 	"""Generates zonal statistics based on input data and zone rasters
 
 	***
@@ -151,7 +159,7 @@ def zonal_stats(zone_raster:str, data_raster:str, n_cores:int = 1, block_scale_f
 	windows = getWindows(hnum, vnum, blocksize)
 
 	# generate arguments to pass into _zonal_worker
-	parallel_args = [(w, data_raster, zone_raster) for w in windows]
+	parallel_args = [(w, data_raster, zone_raster, mask_raster) for w in windows]
 
 	# do the multiprocessing
 	output_data = {}
@@ -160,8 +168,8 @@ def zonal_stats(zone_raster:str, data_raster:str, n_cores:int = 1, block_scale_f
 			output_data = _update(output_data, window_data)
 
 	for zone in output_data:
-		if zone['pixels'] == 0:
-			zone['value'] = np.NaN
+		if output_data[zone]['pixels'] == 0:
+			output_data[zone]['value'] = np.NaN
 
 	if time:
 		log.info(f"Finished in {datetime.now() - startTime}")

@@ -12,7 +12,7 @@ from .const import *
 from .exceptions import *
 
 
-def multi_zonal_stats(input_vector:str, product:str, start_date:str=None, end_date:str=None, full_archive:bool = False, verbose:bool = False, *args, **kwargs) -> dict:
+def multi_zonal_stats(input_vector:str, product:str, mask:str = None, start_date:str=None, end_date:str=None, full_archive:bool = False, verbose:bool = False, *args, **kwargs) -> dict:
 	"""Run zonal.zonal_stats over multiple files
 
 	***
@@ -22,6 +22,9 @@ def multi_zonal_stats(input_vector:str, product:str, start_date:str=None, end_da
 	input_vector: str
 		Path to vector zone file on disk
 	product: str
+		Name of desired product
+	mask: str
+		Name of desired crop mask
 	start_date: str
 		Beginning date of imagery to be analyzed,
 		inclusive. Format as either
@@ -77,6 +80,11 @@ def multi_zonal_stats(input_vector:str, product:str, start_date:str=None, end_da
 	# make sure there's at least one file in the time period of interest
 	assert len(data_dict) >= 1
 
+	# get crop mask
+	if mask is not None:
+		mask = os.path.join(MASK_DIR, f"{product}.{mask}.tif")
+	assert os.path.exists(mask)
+
 	if verbose:
 		log.info("Burning shapefile to raster")
 		burnTime = datetime.now()
@@ -106,7 +114,7 @@ def multi_zonal_stats(input_vector:str, product:str, start_date:str=None, end_da
 	for date in data_dict:
 		if verbose:
 			log.info(date)
-		full_output[date] = zonal_stats(rasterized_shape, data_dict[date], *args, **kwargs)
+		full_output[date] = zonal_stats(rasterized_shape, data_dict[date], mask, *args, **kwargs)
 
 	# log time if necessary
 	if verbose:
@@ -166,6 +174,18 @@ def main():
 		default=20,
 		required = True,
 		help="Number of cores to use for parallel processing")
+	parser.add_argument("-m",
+		"--crop_mask",
+		default = None,
+		choices=[
+			"maize",
+			"rice",
+			"soybean",
+			"winterwheat",
+			"springwheat",
+			"cropland"
+			],
+		help="Name of crop mask to apply")
 	parser.add_argument("-zf",
 		"--zone_field",
 		default=None,
@@ -176,7 +196,7 @@ def main():
 		help="Suppress logging of progress and time")
 	args = parser.parse_args()
 
-	data = multi_zonal_stats(input_vector=args.zone_shapefile, product=args.product_name, start_date=args.start_date, end_date=args.end_date, full_archive=args.full_archive, verbose=args.quiet, n_cores = args.cores)
+	data = multi_zonal_stats(input_vector=args.zone_shapefile, product=args.product_name, mask=args.crop_mask, start_date=args.start_date, end_date=args.end_date, full_archive=args.full_archive, verbose=args.quiet, n_cores = args.cores)
 
 
 	if not args.quiet:
