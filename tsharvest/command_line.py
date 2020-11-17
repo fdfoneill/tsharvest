@@ -63,10 +63,11 @@ def multi_zonal_stats(input_vector:str, product:str, start_date:str=None, end_da
 	all_files = glob.glob(os.path.join(data_directory, f"{product}.*.tif"))
 	data_dict = {}
 	for f in all_files:
-		try:
-			file_date = parseDateString(".".join(os.path.basename(f).split(".")[1:3]))
-		except (IndexError, BadInputError):
-			file_date = parseDateString(os.path.basename(f).split(".")[1])
+		# try:
+		# 	file_date = parseDateString(".".join(os.path.basename(f).split(".")[1:3]))
+		# except (IndexError, BadInputError):
+		# 	file_date = parseDateString(os.path.basename(f).split(".")[1])
+		file_date = dateFromFilePath(f)
 		if start_date and (start_date > file_date):
 			continue
 		if end_date and (end_date < file_date):

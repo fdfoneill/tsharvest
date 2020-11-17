@@ -17,6 +17,7 @@ from .exceptions import *
 
 # housekeeping utilities
 
+
 def clean() ->  bool:
 	"""Removes all files from TEMP_DIR"""
 	allTemp = glob.glob(os.path.join(TEMP_DIR,"*"))
@@ -28,6 +29,7 @@ def clean() ->  bool:
 
 
 # raster/vector utilities
+
 
 def cloud_optimize_inPlace(in_file:str,compress="LZW") -> None:
 	"""Takes path to input and output file location. Reads tif at input location and writes cloud-optimized geotiff of same data to output location."""
@@ -170,6 +172,7 @@ def shapefile_toRaster(shapefile_path, model_raster, out_path, zone_field:str = 
 
 # processing utilities
 
+
 def getWindows(width, height, blocksize) -> list:
 	hnum, vnum = width, height
 	windows = []
@@ -185,6 +188,7 @@ def getWindows(width, height, blocksize) -> list:
 			windows += [targetwindow]
 	return windows
 
+
 def parseDateString(input_string) -> datetime.date:
 	"""Parses string to datetime"""
 	for date_format in ["%Y-%m-%d","%Y.%j"]:
@@ -194,3 +198,15 @@ def parseDateString(input_string) -> datetime.date:
 			continue
 	else:
 		raise BadInputError(f"Failed to parse date string '{input_string}'. Use format YYYY-MM-DD or YYYY.DOY")
+
+
+def dateFromFilePath(file_path) -> datetime.date:
+	"""Parses GLAM data file path to datetime date object"""
+	baseName = os.path.basename(file_path)
+	name, ext = os.path.splitext(baseName)
+	try:
+		product, year, doy = name.split(".")
+		date = ".".join([year, doy])
+	except ValueError:
+		product, date = name.split(".")
+	return parseDateString(date)
