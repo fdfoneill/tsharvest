@@ -211,5 +211,5 @@ def dateFromFilePath(file_path) -> datetime.date:
 	except (ValueError, BadInputError):
 		product, date = name.split(".")[0:1]
 		return parseDateString(date)
-	except BadInputError:
+	except:
 		log.exception(f"Failed to extract date from file name '{baseName}'")
