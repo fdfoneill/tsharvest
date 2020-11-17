@@ -205,11 +205,12 @@ def dateFromFilePath(file_path) -> datetime.date:
 	baseName = os.path.basename(file_path)
 	name, ext = os.path.splitext(baseName)
 	try:
-		product, year, doy = name.split(".")
-		date = ".".join([year, doy])
-		return parseDateString(date)
-	except (ValueError, BadInputError):
-		product, date = name.split(".")[0:1]
-		return parseDateString(date)
+		try:
+			product, year, doy = name.split(".")
+			date = ".".join([year, doy])
+			return parseDateString(date)
+		except (ValueError, BadInputError):
+			product, date = name.split(".")[:1]
+			return parseDateString(date)
 	except:
 		log.exception(f"Failed to extract date from file name '{baseName}'")
