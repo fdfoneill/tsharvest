@@ -55,7 +55,7 @@ def _zonal_worker(args):
 			continue
 		masked = np.array(product_data[(product_data != product_noDataVal) & (shape_data == zone_code)], dtype='int64')
 		value = (masked.mean() if (masked.size > 0) else 0)
-		out_dict[zone_code] = {"value":value,"pixels":valid_pixels}
+		out_dict[zone_code] = {"value":value,"pixels":masked.size}
 
 	return out_dict
 
@@ -158,6 +158,10 @@ def zonal_stats(zone_raster:str, data_raster:str, n_cores:int = 1, block_scale_f
 	with Pool(processes = n_cores) as p:
 		for window_data in p.map(_zonal_worker, parallel_args):
 			output_data = _update(output_data, window_data)
+
+	for zone in output_date:
+		if zone['pixels'] == 0:
+			zone['value'] = np.NaN
 
 	if time:
 		log.info(f"Finished in {datetime.now() - startTime}")
