@@ -63,7 +63,7 @@ def multi_zonal_stats(input_vector:str, product:str, mask:str = None, start_date
 	if "merra-2" in product:
 		data_directory = os.path.join(PRODUCT_DIR, "merra-2")
 		merra_variable = product.split("-")[2]
-		all_files = glob.glob(os.path.join(data_directory, f"{product}.*.{merra_variable}.tif"))
+		all_files = glob.glob(os.path.join(data_directory, f"merra-2.*.{merra_variable}.tif"))
 	else:
 		all_files = glob.glob(os.path.join(data_directory, f"{product}.*.tif"))
 
