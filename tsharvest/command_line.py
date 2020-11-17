@@ -87,7 +87,7 @@ def multi_zonal_stats(input_vector:str, product:str, mask:str = None, start_date
 	# get crop mask
 	if mask is not None:
 		mask = os.path.join(MASK_DIR, f"{product}.{mask}.tif")
-	assert os.path.exists(mask)
+		assert os.path.exists(mask)
 
 	if verbose:
 		log.info("Burning shapefile to raster")
