@@ -159,7 +159,7 @@ def zonal_stats(zone_raster:str, data_raster:str, n_cores:int = 1, block_scale_f
 		for window_data in p.map(_zonal_worker, parallel_args):
 			output_data = _update(output_data, window_data)
 
-	for zone in output_date:
+	for zone in output_data:
 		if zone['pixels'] == 0:
 			zone['value'] = np.NaN
 
