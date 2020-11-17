@@ -138,7 +138,7 @@ def shapefile_toRaster(shapefile_path, model_raster, out_path, zone_field:str = 
 		flagged pixels will be written as "1" and non-flagged
 		pixels will be written as NoData. Default None
 	dtype: str
-		If set, overrides default int16 dtype with new data type,
+		If set, overrides default int32 dtype with new data type,
 		e.g. float32. Default None
 	"""
 	shp = gpd.read_file(shapefile_path)
@@ -149,7 +149,7 @@ def shapefile_toRaster(shapefile_path, model_raster, out_path, zone_field:str = 
 	elif zone_field:
 		meta.update(dtype=shp[zone_field].dtype)
 	else:
-		meta.update(dtype="int16")
+		meta.update(dtype="int32")
 	#meta.update(compress='packbits')
 
 	with rasterio.open(out_path, 'w+', **meta) as out:
