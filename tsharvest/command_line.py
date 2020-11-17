@@ -131,6 +131,7 @@ def stats_to_csv(stats_dictionary, output_csv) -> None:
 	with open(output_csv,'w') as wf:
 		wf.writelines(lines)
 
+
 def main():
 	parser = argparse.ArgumentParser(description="Calculate zonal statistics over a portion of the GLAM data archive")
 	parser.add_argument("zone_shapefile",
@@ -181,5 +182,10 @@ def main():
 	if not args.quiet:
 		log.info("Writing data to csv")
 	stats_to_csv(data,args.out_path)
+
+	try:
+		clean()
+	except:
+		log.warning("Failed to clear temp directory")
 
 	log.info(f"Done. Output is at {args.out_path}")
