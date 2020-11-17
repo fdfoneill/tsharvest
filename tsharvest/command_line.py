@@ -162,6 +162,7 @@ def main():
 	parser.add_argument("-c",
 		"--cores",
 		default=20,
+		required = True,
 		help="Number of cores to use for processing")
 	parser.add_argument("-zf",
 		"--zone_field",
