@@ -1,8 +1,8 @@
-![NASA Harvest logo](https://nasaharvest.org/sites/default/files/harvestlogo18_1.png)
-
 # tsharvest
 
 A Python package for easy time-series analysis of NASA Harvest GLAM system data
+
+![NASA Harvest logo](https://nasaharvest.org/sites/default/files/harvestlogo18_1.png)
 
 # Motivation
 
