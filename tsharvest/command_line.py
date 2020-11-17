@@ -62,14 +62,17 @@ def multi_zonal_stats(input_vector:str, product:str, mask:str = None, start_date
 	data_directory = os.path.join(PRODUCT_DIR, product)
 	if "merra-2" in product:
 		data_directory = os.path.join(PRODUCT_DIR, "merra-2")
-	assert os.path.exists(data_directory) # make sure they didn't mistype the product
-	all_files = glob.glob(os.path.join(data_directory, f"{product}.*.tif"))
+		merra_variable = product.split("-")[2]
+		all_files = glob.glob(os.path.join(data_directory, f"{product}.*.{merra_variable}.tif"))
+	else:
+		all_files = glob.glob(os.path.join(data_directory, f"{product}.*.tif"))
+
+	# make sure some files were found
+	assert len(all_files) > 0
+
+	# filter by date
 	data_dict = {}
 	for f in all_files:
-		# try:
-		# 	file_date = parseDateString(".".join(os.path.basename(f).split(".")[1:3]))
-		# except (IndexError, BadInputError):
-		# 	file_date = parseDateString(os.path.basename(f).split(".")[1])
 		file_date = dateFromFilePath(f)
 		if start_date and (start_date > file_date):
 			continue
@@ -78,7 +81,7 @@ def multi_zonal_stats(input_vector:str, product:str, mask:str = None, start_date
 		data_dict[file_date.strftime("%Y-%m-%d")] = f
 
 	# make sure there's at least one file in the time period of interest
-	assert len(data_dict) >= 1
+	assert len(data_dict) > 0
 
 	# get crop mask
 	if mask is not None:
