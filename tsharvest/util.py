@@ -149,11 +149,14 @@ def shapefile_toRaster(shapefile_path, model_raster, out_path, zone_field:str = 
 	elif zone_field:
 		meta.update(dtype=shp[zone_field].dtype)
 	else:
-		meta.update(dtype="int32")
+		meta.update(dtype="int16")
 	#meta.update(compress='packbits')
 
 	try:
 		out =  rasterio.open(out_path, 'w+', **meta)
+	# merra-2 files have a very high nodata value, beyond the range of int32.
+	# This block catches the resulting ValueError and swaps in the minimum
+	# allowable data type. Nice of rasterio to have such a function.
 	except ValueError:
 		meta.update(dtype=rasterio.dtypes.get_minimum_dtype([meta['nodata']]))
 		out = rasterio.open(out_path, 'w+', **meta)
