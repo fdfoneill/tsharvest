@@ -1,3 +1,5 @@
+![NASA Harvest logo](https://nasaharvest.org/sites/default/files/harvestlogo18_1.png)
+
 # tsharvest
 
 A Python package for easy time-series analysis of NASA Harvest GLAM system data
@@ -35,43 +37,43 @@ The `tsharvest` console script can be used to calculate zonal statistics over a 
 
 * `-h, --help`
 
- * Show help message and exit.
+	* Show help message and exit.
 
 * `-sd START_DATE, --start_date <START_DATE>`
 
- * Start of temporal range of interest, formatted as 'YYYY-MM-DD' or 'YYYY.DOY'
+	* Start of temporal range of interest, formatted as 'YYYY-MM-DD' or 'YYYY.DOY'
 
 * `-ed END_DATE, --end_date <END_DATE>`
 
- * End of temporal range of interest, formatted as 'YYYY-MM-DD' or 'YYYY.DOY'
+	* End of temporal range of interest, formatted as 'YYYY-MM-DD' or 'YYYY.DOY'
 
 * `-f, --full_archive`
 
- * This flag must be set if neither start_date nor end_date are specified.
+	* This flag must be set if neither start_date nor end_date are specified.
 
 * `-c CORES, --cores <CORES>`
 
- * Number of cores to use for parallel processing. Recommended default is 20; remember to check current usage!
+	* Number of cores to use for parallel processing. Recommended default is 20; remember to check current usage!
 
 * `-zf ZONE_FIELD, --zone_field <ZONE_FIELD>`
 
- * If shapefile has multiple zones, name of numeric field to use for zone values.
+	* If shapefile has multiple zones, name of numeric field to use for zone values.
 
 * `-q, --quiet`
 
- * Suppress logging of progress and time.
+	* Suppress logging of progress and time.
 
 * `<zone_shapefile>`
 
- * Path to polygon shapefile that demarcates zones / region of interest.
+	* Path to polygon shapefile that demarcates zones / region of interest.
  
 * `<{MOD09Q1,MYD09Q1,MOD13Q1,MYD13Q1,chirps,merra-2-min,merra-2-mean,merra-2-max,swi}>`
 
- * Name of data product to be analyzed.
+	* Name of data product to be analyzed.
  
 * `<out_path>`
 
- * Path to output csv file.
+	* Path to output csv file.
 
 ## Examples
 
