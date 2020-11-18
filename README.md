@@ -65,7 +65,7 @@ The `tsharvest` console script can be used to calculate zonal statistics over a 
 
 	* Suppress logging of progress and time.
 
-* `<zone_shapefile>`
+* `<ZONE_SHAPEFILE>`
 
 	* Path to polygon shapefile that demarcates zones / region of interest.
  
@@ -73,7 +73,7 @@ The `tsharvest` console script can be used to calculate zonal statistics over a 
 
 	* Name of data product to be analyzed. One of: ["MOD09Q1", "MYD09Q1", "MOD13Q1", "MYD13Q1", "chirps", "merra-2-min", "merra-2-mean", "merra-2-max", "swi"]
 
-* `<out_path>`
+* `<OUT_PATH>`
 
 	* Path to output csv file.
 
@@ -88,6 +88,16 @@ To output CHIRPS rainfall zonal statistics for each "ADM1_CODE" zone, for the fu
 To calculate the maximum temperature in a zone from 2017 to the present:
 
 `tsharvest polygon.shp "merra-2-max" temperature_max.csv -sd "2019.001" -c 20`
+
+## Output
+
+The `tsharvest` script produces a comma-separated value (CSV) file at a location determined by the OUT_PATH passed to the command-line call. The output CSV file will have 3 columns: 'date,' 'zone,' 'mean,' and 'pixels.'
+
+date | zone | mean | pixels
+-----|------|------|-------
+Data source date | Zone ID ('1' for single-zone shapes) | Mean data value in zone | Number of pixels contributing to mean
+2020-06-01 | 1 | 301 | 36
+2020-06-10 | 1 | 23 | 36
 
 # License
 
