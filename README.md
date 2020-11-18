@@ -53,7 +53,11 @@ The `tsharvest` console script can be used to calculate zonal statistics over a 
 
 * `-c CORES, --cores <CORES>`
 
-	* Number of cores to use for parallel processing. Recommended default is 20; remember to check current usage!
+	* Number of cores to use for parallel processing. Recommended default is 20; remember to check current node usage!
+
+* `-m <MASK>, --crop_mask <MASK>`
+
+	* Optional crop mask to apply to analysis. One of: ["maize", "rice", "soybean", "winterwheat", "springwheat", "cropland"]
 
 * `-zf ZONE_FIELD, --zone_field <ZONE_FIELD>`
 
@@ -67,10 +71,10 @@ The `tsharvest` console script can be used to calculate zonal statistics over a 
 
 	* Path to polygon shapefile that demarcates zones / region of interest.
  
-* `<{MOD09Q1,MYD09Q1,MOD13Q1,MYD13Q1,chirps,merra-2-min,merra-2-mean,merra-2-max,swi}>`
+* `<PRODUCT>`
 
-	* Name of data product to be analyzed.
- 
+	* Name of data product to be analyzed. One of: [MOD09Q1, MYD09Q1, MOD13Q1 ,MYD13Q1, chirps, merra-2-min, merra-2-mean, merra-2-max, swi]
+
 * `<out_path>`
 
 	* Path to output csv file.
