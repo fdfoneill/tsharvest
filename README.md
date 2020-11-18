@@ -57,7 +57,7 @@ The `tsharvest` console script can be used to calculate zonal statistics over a 
 
 * `-m <MASK>, --crop_mask <MASK>`
 
-	* Optional crop mask to apply to analysis. One of: ["maize", "rice", "soybean", "winterwheat", "springwheat", "cropland"]
+	* Optional crop mask to apply before analysis. One of: ["maize", "rice", "soybean", "winterwheat", "springwheat", "cropland"]
 
 * `-zf ZONE_FIELD, --zone_field <ZONE_FIELD>`
 
@@ -73,7 +73,7 @@ The `tsharvest` console script can be used to calculate zonal statistics over a 
  
 * `<PRODUCT>`
 
-	* Name of data product to be analyzed. One of: [MOD09Q1, MYD09Q1, MOD13Q1 ,MYD13Q1, chirps, merra-2-min, merra-2-mean, merra-2-max, swi]
+	* Name of data product to be analyzed. One of: ["MOD09Q1", "MYD09Q1", "MOD13Q1", "MYD13Q1", "chirps", "merra-2-min", "merra-2-mean", "merra-2-max", "swi"]
 
 * `<out_path>`
 
