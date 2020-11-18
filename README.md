@@ -37,11 +37,11 @@ The `tsharvest` console script can be used to calculate zonal statistics over a 
 
 	* Show help message and exit.
 
-* `-sd START_DATE, --start_date <START_DATE>`
+* `-sd <START_DATE>, --start_date <START_DATE>`
 
 	* Start of temporal range of interest, formatted as 'YYYY-MM-DD' or 'YYYY.DOY'
 
-* `-ed END_DATE, --end_date <END_DATE>`
+* `-ed <END_DATE>, --end_date <END_DATE>`
 
 	* End of temporal range of interest, formatted as 'YYYY-MM-DD' or 'YYYY.DOY'
 
@@ -49,7 +49,7 @@ The `tsharvest` console script can be used to calculate zonal statistics over a 
 
 	* This flag must be set if neither start_date nor end_date are specified.
 
-* `-c CORES, --cores <CORES>`
+* `-c <CORES>, --cores <CORES>`
 
 	* Number of cores to use for parallel processing. Recommended default is 20; remember to check current node usage!
 
@@ -57,7 +57,7 @@ The `tsharvest` console script can be used to calculate zonal statistics over a 
 
 	* Optional crop mask to apply before analysis. One of: ["maize", "rice", "soybean", "winterwheat", "springwheat", "cropland"]
 
-* `-zf ZONE_FIELD, --zone_field <ZONE_FIELD>`
+* `-zf <ZONE_FIELD>, --zone_field <ZONE_FIELD>`
 
 	* If shapefile has multiple zones, name of numeric field to use for zone values.
 
