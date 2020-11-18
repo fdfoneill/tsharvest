@@ -22,13 +22,11 @@ This `tsharvest` package aims to fill the role of those 'right tools' for time-s
 ## Synopsis
 
 ```
-tsharvest
-
-[-h] [-sd START_DATE] [-ed END_DATE] [-f] -c CORES
-[-zf ZONE_FIELD] [-q]
-zone_shapefile
-{MOD09Q1,MYD09Q1,MOD13Q1,MYD13Q1,chirps,merra-2-min,merra-2-mean,merra-2-max,swi}
-out_path
+tsharvest	[-h] [-sd START_DATE] [-ed END_DATE] [-f] -c CORES
+			[-zf ZONE_FIELD] [-q]
+			zone_shapefile
+			{MOD09Q1,MYD09Q1,MOD13Q1,MYD13Q1,chirps,merra-2-min,merra-2-mean,merra-2-max,swi}
+			out_path
 ```
 
 ## Description
