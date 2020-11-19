@@ -144,13 +144,23 @@ def shapefile_toRaster(shapefile_path, model_raster, out_path, zone_field:str = 
 	shp = gpd.read_file(shapefile_path)
 	with rasterio.open(model_raster,'r') as rst:
 		meta = rst.meta.copy()
+	
+	# this is where we create a generator of geom, value pairs to use in rasterizing
+	if zone_field is not None: 
+		zone_vals = []
+		for i in range(len(shp)):
+			zone_vals.append(shp.at[i,zone_field])
+		shapes = ((geom,val) for geom, val in zip(shp.geometry,zone_vals))
+	else:
+		shapes = ((geom,1) for geom in shp.geometry)
+
+	# set data type
 	if dtype:
 		meta.update(dtype=dtype)
 	elif zone_field:
-		meta.update(dtype=shp[zone_field].dtype)
+		meta.update(dtype=rasterio.dtypes.get_minimum_dtype(zone_vals))
 	else:
 		meta.update(dtype="int16")
-	#meta.update(compress='packbits')
 
 	try:
 		out =  rasterio.open(out_path, 'w+', **meta)
@@ -161,16 +171,6 @@ def shapefile_toRaster(shapefile_path, model_raster, out_path, zone_field:str = 
 		meta.update(dtype=rasterio.dtypes.get_minimum_dtype([meta['nodata']]))
 		out = rasterio.open(out_path, 'w+', **meta)
 		out_arr = out.read(1)
-
-		# this is where we create a generator of geom, value pairs to use in rasterizing
-		if zone_field is not None: 
-			zone_vals = []
-			for i in range(len(shp)):
-				zone_vals.append(shp.at[i,zone_field])
-			shapes = ((geom,val) for geom, val in zip(shp.geometry,zone_vals))
-		else:
-			shapes = ((geom,1) for geom in shp.geometry)
-
 		burned = features.rasterize(shapes=shapes, fill=0, out=out_arr, transform=out.transform)
 		out.write_band(1, burned)
 	out.close()

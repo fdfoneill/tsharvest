@@ -100,7 +100,7 @@ def multi_zonal_stats(input_vector:str, product:str, mask:str = None, start_date
 	# reproject and rasterize shape
 	model_raster = list(data_dict.values())[0]
 	reproject_shapefile(input_vector, model_raster, reprojected_shape)
-	shapefile_toRaster(reprojected_shape, model_raster, rasterized_shape)
+	shapefile_toRaster(reprojected_shape, model_raster, rasterized_shape, zone_field = zone_field)
 
 	# make sure the rasterization worked
 	assert os.path.exists(rasterized_shape)
@@ -200,7 +200,7 @@ def main():
 		help="Suppress logging of progress and time")
 	args = parser.parse_args()
 
-	data = multi_zonal_stats(input_vector=args.zone_shapefile, product=args.product_name, mask=args.crop_mask, start_date=args.start_date, end_date=args.end_date, full_archive=args.full_archive, verbose=args.quiet, n_cores = args.cores)
+	data = multi_zonal_stats(input_vector=args.zone_shapefile, product=args.product_name, mask=args.crop_mask, start_date=args.start_date, end_date=args.end_date, full_archive=args.full_archive, verbose=args.quiet, n_cores = args.cores, zone_field = args.zone_field)
 
 
 	if not args.quiet:
