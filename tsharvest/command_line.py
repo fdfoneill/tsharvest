@@ -138,7 +138,7 @@ def stats_to_csv(stats_dictionary, output_csv, zone_code_dict = None) -> None:
 	for date in stats_dictionary:
 		for zone in stats_dictionary[date]:
 			if zone_code_dict is not None:
-				zone_name = zone_code_dict[zone]
+				zone_name = zone_code_dict[int(zone)]
 			else:
 				zone_name = zone
 			line = f"{date},{zone_name},{stats_dictionary[date][zone]['value']},{stats_dictionary[date][zone]['pixels']}\n"
@@ -211,7 +211,7 @@ def main():
 		log.info("Writing data to csv")
 	if args.zone_field:
 		zone_code_dict = zone_field_toCodes(args.zone_shapefile,args.zone_field)
-	stats_to_csv(data,args.out_path)
+	stats_to_csv(data,args.out_path,zone_code_dict)
 
 	try:
 		clean()

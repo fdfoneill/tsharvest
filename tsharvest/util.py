@@ -203,7 +203,7 @@ def zone_field_toCodes(shapefile_path, zone_field) -> dict:
 		zone_vals.append(shp.at[i,zone_field])
 	code_dict = {}
 	for code, name in enumerate(zone_vals):
-		code_dict[code] = name
+		code_dict[int(code)] = name
 
 	return code_dict
 
