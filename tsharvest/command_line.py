@@ -100,7 +100,7 @@ def multi_zonal_stats(input_vector:str, product:str, mask:str = None, start_date
 	# reproject and rasterize shape
 	model_raster = list(data_dict.values())[0]
 	reproject_shapefile(input_vector, model_raster, reprojected_shape)
-	shapefile_toRaster(reprojected_shape, model_raster, rasterized_shape, zone_field = zone_field)
+	shapefile_toRaster(reprojected_shape, model_raster, rasterized_shape, *args, **kwargs)
 
 	# make sure the rasterization worked
 	assert os.path.exists(rasterized_shape)

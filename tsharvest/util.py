@@ -116,7 +116,7 @@ def reproject_shapefile(shapefile_path, model_raster, out_path) -> str:
 	return out_shapefile_path
 
 
-def shapefile_toRaster(shapefile_path, model_raster, out_path, zone_field:str = None, dtype = None) -> str:
+def shapefile_toRaster(shapefile_path, model_raster, out_path, zone_field:str = None, dtype = None, *args, **kwargs) -> str:
 	"""Burns shapefile into raster image
 	
 	***
