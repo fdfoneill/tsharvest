@@ -210,7 +210,7 @@ def main():
 	if not args.quiet:
 		log.info("Writing data to csv")
 	if args.zone_field:
-		zone_code_dict = zone_field_toCode(args.zone_shapefile,args.zone_field)
+		zone_code_dict = zone_field_toCodes(args.zone_shapefile,args.zone_field)
 	stats_to_csv(data,args.out_path)
 
 	try:
