@@ -148,8 +148,9 @@ def shapefile_toRaster(shapefile_path, model_raster, out_path, zone_field:str = 
 	# this is where we create a generator of geom, value pairs to use in rasterizing
 	if zone_field is not None: 
 		zone_vals = []
+		zone_code_dict = zone_field_toCodes(shapefile_path, zone_field)
 		for i in range(len(shp)):
-			zone_vals.append(shp.at[i,zone_field])
+			zone_vals.append(zone_code_dict(shp.at[i,zone_field]))
 		shapes = ((geom,val) for geom, val in zip(shp.geometry,zone_vals))
 	else:
 		shapes = ((geom,1) for geom in shp.geometry)
@@ -176,6 +177,36 @@ def shapefile_toRaster(shapefile_path, model_raster, out_path, zone_field:str = 
 	out.close()
 
 	return out_path
+
+
+def zone_field_toCodes(shapefile_path, zone_field) -> dict:
+	"""Generates a dictionary of unique numeric codes for shapefile zones
+
+	***
+
+	Parameters
+	----------
+	shapefile_path:str
+		Path to shapefile
+	zone_field:str
+		Name of field to be used for zonation
+
+	Returns
+	-------
+	Dictionary in format {zone_name:zone_code}
+	where zone_code is a unique integer corresponding
+	to zone_name.
+	"""
+	shp = gpd.read_file(shapefile_path)
+	zone_vals = []
+		for i in range(len(shp)):
+			zone_vals.append(shp.at[i,zone_field])
+	code_dict = {}
+	for code, name in enumerate(zone_vals):
+		code_dict[name] = code
+
+	return code_dict
+
 
 
 # processing utilities

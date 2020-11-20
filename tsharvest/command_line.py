@@ -129,7 +129,7 @@ def multi_zonal_stats(input_vector:str, product:str, mask:str = None, start_date
 	return full_output
 
 
-def stats_to_csv(stats_dictionary, output_csv) -> None:
+def stats_to_csv(stats_dictionary, output_csv, zone_code_dict = None) -> None:
 	"""Writes statistics dictionary to csv format"""
 	lines = []
 	header = "date,zone,mean,pixels\n"
