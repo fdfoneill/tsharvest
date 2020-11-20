@@ -150,7 +150,8 @@ def shapefile_toRaster(shapefile_path, model_raster, out_path, zone_field:str = 
 		zone_vals = []
 		for i in range(len(shp)):
 			zone_vals.append(shp.at[i,zone_field])
-		shapes = ((geom,val) for geom, val in zip(shp.geometry,zone_vals))
+		zone_codes = [i for i, val in enumerate(zone_vals)]
+		shapes = ((geom,val) for geom, val in zip(shp.geometry,zone_codes))
 	else:
 		shapes = ((geom,1) for geom in shp.geometry)
 
@@ -158,7 +159,7 @@ def shapefile_toRaster(shapefile_path, model_raster, out_path, zone_field:str = 
 	if dtype:
 		meta.update(dtype=dtype)
 	elif zone_field:
-		meta.update(dtype=rasterio.dtypes.get_minimum_dtype(zone_vals))
+		meta.update(dtype=rasterio.dtypes.get_minimum_dtype(zone_codes))
 	else:
 		meta.update(dtype="int16")
 
@@ -176,6 +177,36 @@ def shapefile_toRaster(shapefile_path, model_raster, out_path, zone_field:str = 
 	out.close()
 
 	return out_path
+
+
+def zone_field_toCodes(shapefile_path, zone_field) -> dict:
+	"""Generates a dictionary of unique numeric codes for shapefile zones
+
+	***
+
+	Parameters
+	----------
+	shapefile_path:str
+		Path to shapefile
+	zone_field:str
+		Name of field to be used for zonation
+
+	Returns
+	-------
+	Dictionary in format {zone_name:zone_code}
+	where zone_code is a unique integer corresponding
+	to zone_name.
+	"""
+	shp = gpd.read_file(shapefile_path)
+	zone_vals = []
+	for i in range(len(shp)):
+		zone_vals.append(shp.at[i,zone_field])
+	code_dict = {}
+	for code, name in enumerate(zone_vals):
+		code_dict[int(code)] = name
+
+	return code_dict
+
 
 
 # processing utilities

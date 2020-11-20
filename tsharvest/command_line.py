@@ -129,7 +129,7 @@ def multi_zonal_stats(input_vector:str, product:str, mask:str = None, start_date
 	return full_output
 
 
-def stats_to_csv(stats_dictionary, output_csv) -> None:
+def stats_to_csv(stats_dictionary, output_csv, zone_code_dict = None) -> None:
 	"""Writes statistics dictionary to csv format"""
 	lines = []
 	header = "date,zone,mean,pixels\n"
@@ -137,7 +137,11 @@ def stats_to_csv(stats_dictionary, output_csv) -> None:
 	# generate lines
 	for date in stats_dictionary:
 		for zone in stats_dictionary[date]:
-			line = f"{date},{zone},{stats_dictionary[date][zone]['value']},{stats_dictionary[date][zone]['pixels']}\n"
+			if zone_code_dict is not None:
+				zone_name = zone_code_dict[int(zone)]
+			else:
+				zone_name = zone
+			line = f"{date},{zone_name},{stats_dictionary[date][zone]['value']},{stats_dictionary[date][zone]['pixels']}\n"
 			lines.append(line)
 	# write to file
 	with open(output_csv,'w') as wf:
@@ -205,7 +209,9 @@ def main():
 
 	if not args.quiet:
 		log.info("Writing data to csv")
-	stats_to_csv(data,args.out_path)
+	if args.zone_field:
+		zone_code_dict = zone_field_toCodes(args.zone_shapefile,args.zone_field)
+	stats_to_csv(data,args.out_path,zone_code_dict)
 
 	try:
 		clean()
