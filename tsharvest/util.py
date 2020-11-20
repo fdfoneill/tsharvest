@@ -199,8 +199,8 @@ def zone_field_toCodes(shapefile_path, zone_field) -> dict:
 	"""
 	shp = gpd.read_file(shapefile_path)
 	zone_vals = []
-		for i in range(len(shp)):
-			zone_vals.append(shp.at[i,zone_field])
+	for i in range(len(shp)):
+		zone_vals.append(shp.at[i,zone_field])
 	code_dict = {}
 	for code, name in enumerate(zone_vals):
 		code_dict[code] = name
