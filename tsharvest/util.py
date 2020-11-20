@@ -148,10 +148,10 @@ def shapefile_toRaster(shapefile_path, model_raster, out_path, zone_field:str = 
 	# this is where we create a generator of geom, value pairs to use in rasterizing
 	if zone_field is not None: 
 		zone_vals = []
-		zone_code_dict = zone_field_toCodes(shapefile_path, zone_field)
 		for i in range(len(shp)):
-			zone_vals.append(zone_code_dict(shp.at[i,zone_field]))
-		shapes = ((geom,val) for geom, val in zip(shp.geometry,zone_vals))
+			zone_vals.append(shp.at[i,zone_field])
+		zone_codes = [i for i, val in enumerate(zone_vals)]
+		shapes = ((geom,val) for geom, val in zip(shp.geometry,zone_codes))
 	else:
 		shapes = ((geom,1) for geom in shp.geometry)
 
@@ -159,7 +159,7 @@ def shapefile_toRaster(shapefile_path, model_raster, out_path, zone_field:str = 
 	if dtype:
 		meta.update(dtype=dtype)
 	elif zone_field:
-		meta.update(dtype=rasterio.dtypes.get_minimum_dtype(zone_vals))
+		meta.update(dtype=rasterio.dtypes.get_minimum_dtype(zone_codes))
 	else:
 		meta.update(dtype="int16")
 
@@ -203,7 +203,7 @@ def zone_field_toCodes(shapefile_path, zone_field) -> dict:
 			zone_vals.append(shp.at[i,zone_field])
 	code_dict = {}
 	for code, name in enumerate(zone_vals):
-		code_dict[name] = code
+		code_dict[code] = name
 
 	return code_dict
 
