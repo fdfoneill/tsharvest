@@ -44,7 +44,7 @@ def cloud_optimize_inPlace(in_file:str,compress="LZW") -> None:
 			shutil.copyfileobj(b,a)
 
 	## add tiling to file
-	cloudOpArgs = ["gdal_translate",intermediate_file,in_file,'-q','-co', "TILED=YES",'-co',"COPY_SRC_OVERVIEWS=YES",'-co', f"COMPRESS={compress}", "-co", "PREDICTOR=2"]
+	cloudOpArgs = ["gdal_translate",intermediate_file,in_file,'-q','-co', "TILED=YES",'-co',"COPY_SRC_OVERVIEWS=YES",'-co', f"COMPRESS={compress}"]#, "-co", "PREDICTOR=2"]
 	subprocess.call(cloudOpArgs)
 
 	## remove intermediate
