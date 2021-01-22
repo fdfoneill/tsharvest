@@ -10,3 +10,12 @@ TEST_SHP = r"/gpfs/data1/cmongp2/oneilld/2020-11_parallelized_zonal_stats/exampl
 TEST_TIF = r"/gpfs/data1/cmongp2/GLAM/rasters/products/MOD09Q1/MOD09Q1.2020.001.tif"
 
 MASK_DIR = r"/gpfs/data1/cmongp2/GLAM/gdp/glam_data_processing/glam_data_processing/statscode/Masks"
+
+EXTERNAL_PRODUCTS = [
+	"chirps_gefs",
+	"esi_4wk",
+	"soil_moisture_as1",
+	"soil_moisture_as2"
+]
+
+EXTERNAL_DIR = "/gpfs/data1/cmongp1/GEOGLAM/Input/intermed/"

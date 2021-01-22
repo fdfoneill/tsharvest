@@ -118,7 +118,7 @@ def reproject_shapefile(shapefile_path, model_raster, out_path) -> str:
 
 def shapefile_toRaster(shapefile_path, model_raster, out_path, zone_field:str = None, dtype = None, *args, **kwargs) -> str:
 	"""Burns shapefile into raster image
-	
+
 	***
 
 	Parameters
@@ -144,9 +144,9 @@ def shapefile_toRaster(shapefile_path, model_raster, out_path, zone_field:str = 
 	shp = gpd.read_file(shapefile_path)
 	with rasterio.open(model_raster,'r') as rst:
 		meta = rst.meta.copy()
-	
+
 	# this is where we create a generator of geom, value pairs to use in rasterizing
-	if zone_field is not None: 
+	if zone_field is not None:
 		zone_vals = []
 		for i in range(len(shp)):
 			zone_vals.append(shp.at[i,zone_field])
@@ -244,13 +244,31 @@ def dateFromFilePath(file_path) -> datetime.date:
 	baseName = os.path.basename(file_path)
 	name, ext = os.path.splitext(baseName)
 	try:
-		try:
-			product, year, doy = name.split(".")
-			date = ".".join([year, doy])
-			return parseDateString(date)
-		except (ValueError, BadInputError):
-			product, date = name.split(".")[:2]
-			return parseDateString(date)
+		if not EXTERNAL_DIR in file_path:
+			try:
+				product, year, doy = name.split(".")
+				date = ".".join([year, doy])
+				return parseDateString(date)
+			except (ValueError, BadInputError):
+				product, date = name.split(".")[:2]
+				return parseDateString(date)
+		else: # we do things differently for Ritvik's products
+			product = os.path.dirname(file_path).split("/")[-1]
+			if product == "chirps_gefs":
+				dateBlob = name.split("_")[1] # gives something like 20171021
+				year = dateBlob[:4]
+				month = dateBlob[4:6]
+				day = dateBlob[6:]
+				return parseDateString(f"{year}-{month}-{day}")
+			elif product == "esi_4wk":
+				dateBlob = name.split("_")[-1]
+				year = dateBlob[:4]
+				doy = dateBlob[4:]
+				return parseDateString(f"{year}.{doy}")
+			elif product in ["soil_moisture_as1","soil_moisture_as2"]:
+				year = name.split("_")[-4]
+				doy = name.split("_")[-3]
+				return parseDateString(f"{year}.{doy}")
 	except Exception as e:
 		log.error(f"Failed to extract date from file name '{baseName}'")
 		raise e
