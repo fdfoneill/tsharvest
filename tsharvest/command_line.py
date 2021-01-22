@@ -59,7 +59,10 @@ def multi_zonal_stats(input_vector:str, product:str, mask:str = None, start_date
 			raise BadInputError("If full_archive is False, must set either start_date or end_date!")
 
 	# get list of data files to be analyzed
-	data_directory = os.path.join(PRODUCT_DIR, product)
+	if product in EXTERNAL_PRODUCTS:
+		data_directory = os.path.join(EXTERNAL_DIR, product)
+	else:
+		data_directory = os.path.join(PRODUCT_DIR, product)
 	if "merra-2" in product:
 		data_directory = os.path.join(PRODUCT_DIR, "merra-2")
 		merra_variable = product.split("-")[2]
@@ -86,8 +89,12 @@ def multi_zonal_stats(input_vector:str, product:str, mask:str = None, start_date
 
 	# get crop mask
 	if mask is not None:
-		mask = os.path.join(MASK_DIR, f"{product}.{mask}.tif")
-		assert os.path.exists(mask)
+		try:
+			mask = os.path.join(MASK_DIR, f"{product}.{mask}.tif")
+			assert os.path.exists(mask)
+		except AssertionError:
+			mask = None
+			log.warning(f"Mask '{mask}' does not exist for product '{product}.' Running with no mask.")
 
 	if verbose:
 		log.info("Burning shapefile to raster")
@@ -112,7 +119,7 @@ def multi_zonal_stats(input_vector:str, product:str, mask:str = None, start_date
 		log.info(f"Finished burning shapefile in {datetime.now() - burnTime}")
 		log.info("Calculating zonal statistics")
 		zoneTime = datetime.now()
-	
+
 	# meat and potatoes of processing
 	full_output = {}
 	for date in data_dict:
