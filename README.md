@@ -8,7 +8,7 @@ A Python package for easy time-series analysis of NASA Harvest GLAM system data
 
 The GLAM system (glam.nasaharvest.org) is a web-based, visualization and analysis tool that utilizes near-real time MODIS and VIIRS land surface reflectance products in tandem with a variety of other datasets to empower continuous crop condition monitoring. One result of the GLAM workflow is that large amounts of earth observation data are stored in Cloud-Optimized Geotiff (COG) format on the NASA Harvest computing cluster. This trove of data is an ideal subject for time-series analysis, allowing (with the right tools) for the quick and easy extraction of environmental indicators over a long temporal period.
 
-This `tsharvest` package aims to fill the role of those 'right tools' for time-series analysis. It offers a simple command-line interface through which NASA Harvest users can provide their own regions of interest in vector format, specify their desired temporal period, and output zonal statistics in comma-separated value (CSV) format. 
+This `tsharvest` package aims to fill the role of those 'right tools' for time-series analysis. It offers a simple command-line interface through which NASA Harvest users can provide their own regions of interest in vector format, specify their desired temporal period, and output zonal statistics in comma-separated value (CSV) format.
 
 # Features
 
@@ -68,10 +68,10 @@ The `tsharvest` console script can be used to calculate zonal statistics over a 
 * `<ZONE_SHAPEFILE>`
 
 	* Path to polygon shapefile that demarcates zones / region of interest.
- 
+
 * `<PRODUCT>`
 
-	* Name of data product to be analyzed. One of: ["MOD09Q1", "MYD09Q1", "MOD13Q1", "MYD13Q1", "chirps", "merra-2-min", "merra-2-mean", "merra-2-max", "swi"]
+	* Name of data product to be analyzed. One of: ["MOD09Q1", "MYD09Q1", "MOD13Q1", "MYD13Q1", "chirps", "merra-2-min", "merra-2-mean", "merra-2-max", "swi", "chirps_gefs", "esi_4wk", "soil_moisture_as1", "soil_moisture_as2"]
 
 * `<OUT_PATH>`
 
