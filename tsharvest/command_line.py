@@ -63,11 +63,14 @@ def multi_zonal_stats(input_vector:str, product:str, mask:str = None, start_date
 		data_directory = os.path.join(EXTERNAL_DIR, product)
 	else:
 		data_directory = os.path.join(PRODUCT_DIR, product)
+	# filter
 	if "merra-2" in product:
 		data_directory = os.path.join(PRODUCT_DIR, "merra-2")
 		merra_variable = product.split("-")[2]
 		all_files = glob.glob(os.path.join(data_directory, f"merra-2.*.{merra_variable}.tif"))
 		product = "merra-2"
+	elif product in EXTERNAL_PRODUCTS:
+		all_files = glob.glob(os.path.join(data_directory, f"*.tif"))
 	else:
 		all_files = glob.glob(os.path.join(data_directory, f"{product}.*.tif"))
 
