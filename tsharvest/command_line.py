@@ -170,7 +170,7 @@ def main():
 			"merra-2-mean",
 			"merra-2-max",
 			"swi"
-			],
+			] + EXTERNAL_PRODUCTS,
 		help="Name of data product to be analyzed")
 	parser.add_argument("out_path",
 		help="Path to output csv file")
