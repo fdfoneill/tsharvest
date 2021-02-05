@@ -171,9 +171,9 @@ def shapefile_toRaster(shapefile_path, model_raster, out_path, zone_field:str = 
 	except ValueError:
 		meta.update(dtype=rasterio.dtypes.get_minimum_dtype([meta['nodata']]))
 		out = rasterio.open(out_path, 'w+', **meta)
-		out_arr = out.read(1)
-		burned = features.rasterize(shapes=shapes, fill=0, out=out_arr, transform=out.transform)
-		out.write_band(1, burned)
+	out_arr = out.read(1)
+	burned = features.rasterize(shapes=shapes, fill=0, out=out_arr, transform=out.transform)
+	out.write_band(1, burned)
 	out.close()
 
 	return out_path
